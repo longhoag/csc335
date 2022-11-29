@@ -69,17 +69,18 @@ public class SendEmailUsingGMailSMTP {
 
 	// -- You must have a valid gmail username/password pair to use
 	// gmail as a SMTP service
-	static private String username = "<<insert your gmail username here>>";
-	static private String password = "<<insert your password here>>";
+	static private String SMTPusername = "iris.dq";
+	static private String SMTPpassword = "hfywxvauhepqnxxk";
 
-	public static void main(String[] args) {
+	public static void SendRecoveryEmail(String emailAddress, String password) {
 
-		Scanner kb = new Scanner(System.in);
-		System.out.print("SMTP email username: ");
-		username = kb.next();
-		System.out.print("Recipient email address: ");
-		String to = kb.next();
-		String messagetext = "Here is your password: " + "abcd1234";
+//		Scanner kb = new Scanner(System.in);
+//		System.out.print("SMTP email username: ");
+//		SMTPusername = kb.next();
+//		System.out.print("Recipient email address: ");
+//		String to = kb.next();
+		String to = emailAddress;
+		String messagetext = "Here is your password: " + password;
 		
 		// -- set up host properties
 		//    refer to https://javaee.github.io/javamail/docs/api/com/sun/mail/smtp/package-summary.html for additional properties
@@ -94,12 +95,12 @@ public class SendEmailUsingGMailSMTP {
 		Session session = Session.getInstance(props,
 				new javax.mail.Authenticator() {
 					protected PasswordAuthentication getPasswordAuthentication() {
-						return new PasswordAuthentication(username, password);
+						return new PasswordAuthentication(SMTPusername, SMTPpassword);
 					}
 				});
 
 		// -- Set up the sender's email account information
-		String from = username + "@gmail.com";
+		String from = SMTPusername + "@gmail.com";
 
 		try {
 			// -- Create a default MimeMessage object.

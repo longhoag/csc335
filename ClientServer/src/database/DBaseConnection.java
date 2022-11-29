@@ -136,6 +136,68 @@ public class DBaseConnection {
 		}
 	}
 	
+	public String getPassword(String username) {
+		String password = "";
+		try {
+			rset = stmt.executeQuery("SELECT * FROM users WHERE username='" + username + "';");
+			rset.next();
+			password = rset.getString(2);
+		}
+		catch (SQLException ex) {
+			// handle any errors
+			System.out.println("SQLException: " + ex.getMessage());
+			System.out.println("SQLState: " + ex.getSQLState());
+			System.out.println("VendorError: " + ex.getErrorCode());
+		}
+		return password;
+	}
+	
+	public String getEmailAddress(String username) {
+		String emailAddress = "";
+		try {
+			rset = stmt.executeQuery("SELECT * FROM users WHERE username='" + username + "';");
+			rset.next();
+			emailAddress = rset.getString(3);
+		}
+		catch (SQLException ex) {
+			// handle any errors
+			System.out.println("SQLException: " + ex.getMessage());
+			System.out.println("SQLState: " + ex.getSQLState());
+			System.out.println("VendorError: " + ex.getErrorCode());
+		}
+		return emailAddress;
+	}
+	
+	public boolean UserExists(String username) {
+		boolean userExists = false;
+		try {
+			rset = stmt.executeQuery("SELECT EXISTS(SELECT * FROM users WHERE username='" + username + "') AS TRUTH;");
+			rset.next();
+			userExists = (Integer.parseInt(rset.getString(1)) == 1);
+		}
+		catch (SQLException ex) {
+			// handle any errors
+			System.out.println("SQLException: " + ex.getMessage());
+			System.out.println("SQLState: " + ex.getSQLState());
+			System.out.println("VendorError: " + ex.getErrorCode());
+		}
+		return userExists;
+	}
+	
+	// returns true if successful, false if the user already exists
+	public void RegisterNewUser(String username, String password, String emailaddress) {
+		try {
+			stmt.executeUpdate("INSERT INTO users VALUE('"
+					+ username + "', '" + password + "', '" + emailaddress + "', 0);");
+		}
+		catch (SQLException ex) {
+			// handle any errors
+			System.out.println("SQLException: " + ex.getMessage());
+			System.out.println("SQLState: " + ex.getSQLState());
+			System.out.println("VendorError: " + ex.getErrorCode());
+		}
+	}
+	
 	public static void main(String[] args) {
 
 		// -- username = csc335, password = C$C335

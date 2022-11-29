@@ -116,28 +116,23 @@ public class Client {
 		Scanner kb = new Scanner(System.in);
 		System.out.print("Server IP Address: ");
 		String serveripaddress = kb.next();
-		kb.close();
+		//String serveripaddress = "localhost";
 		
 		// -- instantiate a Client object
 		//    the constructor will attempt to connect to the server
 		Client client = new Client(serveripaddress);
 		
-		String commandString;
-		String replyString;
+		String commandString = "";
+		String replyString = "";
 		
-		for (int i = 0; i < 10; ++i) {
-			try {
-				Thread.sleep(1000);
-			} catch (InterruptedException e) {
-				e.printStackTrace();
-			};
-			commandString = "hello";
-			System.out.println("CLIENT send:  " + commandString);
-			// -- send message to server and receive reply.
+		while (commandString != "disconnect") {
+			commandString = kb.next();
+			System.out.println("CLIENT: " + commandString);
 			replyString = client.sendString(commandString);
-			System.out.println("CLIENT receive: " + replyString);
+			System.out.println("SERVER: " + replyString);
 		}
 
+		kb.close();
 		client.disconnect();
 	}
 

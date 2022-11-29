@@ -7,6 +7,9 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.Socket;
 
+import database.DBaseConnection;
+import gmail.SendEmailUsingGMailSMTP;
+
 
 
 
@@ -57,6 +60,9 @@ public class ConnectionThread extends Thread {
 
 
 	public void run () {
+		DBaseConnection dbc = new DBaseConnection("root", "root");
+		// It might become necessary to move this database connection to the main server file.
+		
 		// -- server thread runs until the client terminates the connection
 		while (go) {
 			try {
@@ -83,9 +89,47 @@ public class ConnectionThread extends Thread {
 					dataout.flush();
 					
 				}
+				else if (txt.equals("login")) {
+					
+				}
+				else if (txt.equals("register")) {
+					dataout.writeBytes("username?" + "\n");
+					dataout.flush();
+					String user = datain.readLine();
+					if (dbc.UserExists(user)) {
+						dataout.writeBytes("User " + user + " already exists" + "\n");
+						dataout.flush();
+					}
+					else {
+						dataout.writeBytes("password?" + "\n");
+						dataout.flush();
+						String pass = datain.readLine();
+						dataout.writeBytes("email address?" + "\n");
+						dataout.flush();
+						String email = datain.readLine();
+						dbc.RegisterNewUser(user, pass, email);
+						dataout.writeBytes("User " + user + " was registered" + "\n");
+						dataout.flush();
+					}
+				}
+				else if (txt.equals("recover")) {
+					dataout.writeBytes("username?" + "\n");
+					dataout.flush();
+					String user = datain.readLine();
+					if (dbc.UserExists(user)) {
+						SendEmailUsingGMailSMTP.SendRecoveryEmail(
+								dbc.getEmailAddress(user), dbc.getPassword(user));
+						dataout.writeBytes("Password recovery email sent" + "\n");
+					}
+					else {
+						dataout.writeBytes("User " + user + " does not exist" + "\n");
+					}
+					dataout.flush();
+				}
 				else {
 					System.out.println("unrecognized command >>" + txt + "<<");
 					dataout.writeBytes(txt + "\n");
+					dataout.flush();
 				}
 			} 
 			catch (IOException e) {

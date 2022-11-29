@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<classpath>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
+	<classpathentry kind="src" path="ClientServer/src"/>
+	<classpathentry kind="src" path="FinalProject/src"/>
+	<classpathentry kind="src" path="week10/src"/>
+	<classpathentry kind="src" path="week8/src"/>
+	<classpathentry kind="lib" path="activation.jar"/>
+	<classpathentry kind="lib" path="javax.mail.jar"/>
+	<classpathentry kind="output" path="ClientServer/bin"/>
+</classpath>
