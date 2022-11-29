@@ -1,0 +1,9 @@
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
+// put this method inside a class
+private static boolean VerifyEmailFormat(String email) {
+  Pattern p = Pattern.compile("[a-z0-9][a-z0-9\\-\\._]+[a-z0-9]@[a-z][a-z\\-]+[a-z]\\.[a-z]+", Pattern.CASE_INSENSITIVE);
+  Matcher m = p.matcher(email);
+  return m.matches();
+}
