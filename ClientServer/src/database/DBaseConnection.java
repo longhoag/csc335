@@ -168,12 +168,74 @@ public class DBaseConnection {
 		return emailAddress;
 	}
 	
+	public int getLockCount(String username) {
+		int lockCount = 0;
+		try {
+			rset = stmt.executeQuery("SELECT * FROM users WHERE username='" + username + "';");
+			rset.next();
+			lockCount = rset.getInt(4);
+		}
+		catch (SQLException ex) {
+			// handle any errors
+			System.out.println("SQLException: " + ex.getMessage());
+			System.out.println("SQLState: " + ex.getSQLState());
+			System.out.println("VendorError: " + ex.getErrorCode());
+		}
+		return lockCount;
+	}
+	
+	// Increase lock count of a user by 1
+	public void increaseLockCount(String username) {
+		int lockCount = getLockCount(username);
+		try {
+			stmt.executeUpdate("UPDATE users SET lockcount=" + (lockCount + 1)
+					+ " WHERE username='" + username + "';");
+		}
+		catch (SQLException ex) {
+			// handle any errors
+			System.out.println("SQLException: " + ex.getMessage());
+			System.out.println("SQLState: " + ex.getSQLState());
+			System.out.println("VendorError: " + ex.getErrorCode());
+		}
+	}
+	
+	// Reset a user's lock count to 0
+	public void resetLockCount(String username) {
+		try {
+			stmt.executeUpdate("UPDATE users SET lockcount=0 WHERE username='" + username + "';");
+		}
+		catch (SQLException ex) {
+			// handle any errors
+			System.out.println("SQLException: " + ex.getMessage());
+			System.out.println("SQLState: " + ex.getSQLState());
+			System.out.println("VendorError: " + ex.getErrorCode());
+		}
+	}
+	
+	// Returns number of registered users
+	public int getUserCount() {
+		int userCount = 0;
+		try {
+			rset = stmt.executeQuery("SELECT COUNT(*) FROM users;");
+			rset.next();
+			userCount = rset.getInt(1);
+		}
+		catch (SQLException ex) {
+			// handle any errors
+			System.out.println("SQLException: " + ex.getMessage());
+			System.out.println("SQLState: " + ex.getSQLState());
+			System.out.println("VendorError: " + ex.getErrorCode());
+		}
+		return userCount;
+	}
+	
+	// Returns true if user already exists in database, false otherwise
 	public boolean UserExists(String username) {
 		boolean userExists = false;
 		try {
 			rset = stmt.executeQuery("SELECT EXISTS(SELECT * FROM users WHERE username='" + username + "') AS TRUTH;");
 			rset.next();
-			userExists = (Integer.parseInt(rset.getString(1)) == 1);
+			userExists = (rset.getInt(1) == 1);
 		}
 		catch (SQLException ex) {
 			// handle any errors
@@ -184,7 +246,7 @@ public class DBaseConnection {
 		return userExists;
 	}
 	
-	// returns true if successful, false if the user already exists
+	// Adds new user to database (doesn't check if user already exists)
 	public void RegisterNewUser(String username, String password, String emailaddress) {
 		try {
 			stmt.executeUpdate("INSERT INTO users VALUE('"
