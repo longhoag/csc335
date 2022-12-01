@@ -70,17 +70,11 @@ public class SendEmailUsingGMailSMTP {
 	// -- You must have a valid gmail username/password pair to use
 	// gmail as a SMTP service
 	static private String SMTPusername = "iris.dq";
-	static private String SMTPpassword = "hfywxvauhepqnxxk";
+ 	static private String SMTPpassword = "hzhkwyllhjonteqr";
 
-	public static void SendRecoveryEmail(String emailAddress, String password) {
-
-//		Scanner kb = new Scanner(System.in);
-//		System.out.print("SMTP email username: ");
-//		SMTPusername = kb.next();
-//		System.out.print("Recipient email address: ");
-//		String to = kb.next();
-		String to = emailAddress;
-		String messagetext = "Here is your password: " + password;
+ 	public static void SendRecoveryEmail(String emailAddress, String password) {
+ 		String to = emailAddress;
+ 		String messagetext = "Here is your password: " + password;
 		
 		// -- set up host properties
 		//    refer to https://javaee.github.io/javamail/docs/api/com/sun/mail/smtp/package-summary.html for additional properties

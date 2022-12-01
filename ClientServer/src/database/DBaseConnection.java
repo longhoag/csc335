@@ -110,8 +110,7 @@ public class DBaseConnection {
 		}
 	}
 
-	public void printResultSet(ResultSet rset)
-	{
+	public void printResultSet(ResultSet rset) {
 		try {
 	        // -- the metadata tells us how many columns in the data
 			ResultSetMetaData rsmd = rset.getMetaData();
@@ -136,142 +135,143 @@ public class DBaseConnection {
 		}
 	}
 	
-	public String getPassword(String username) {
-		String password = "";
-		try {
-			rset = stmt.executeQuery("SELECT * FROM users WHERE username='" + username + "';");
-			rset.next();
-			password = rset.getString(2);
-		}
-		catch (SQLException ex) {
-			// handle any errors
-			System.out.println("SQLException: " + ex.getMessage());
-			System.out.println("SQLState: " + ex.getSQLState());
-			System.out.println("VendorError: " + ex.getErrorCode());
-		}
-		return password;
-	}
-	
-	public String getEmailAddress(String username) {
-		String emailAddress = "";
-		try {
-			rset = stmt.executeQuery("SELECT * FROM users WHERE username='" + username + "';");
-			rset.next();
-			emailAddress = rset.getString(3);
-		}
-		catch (SQLException ex) {
-			// handle any errors
-			System.out.println("SQLException: " + ex.getMessage());
-			System.out.println("SQLState: " + ex.getSQLState());
-			System.out.println("VendorError: " + ex.getErrorCode());
-		}
-		return emailAddress;
-	}
-	
 	public int getLockCount(String username) {
-		int lockCount = 0;
-		try {
-			rset = stmt.executeQuery("SELECT * FROM users WHERE username='" + username + "';");
-			rset.next();
-			lockCount = rset.getInt(4);
-		}
-		catch (SQLException ex) {
-			// handle any errors
-			System.out.println("SQLException: " + ex.getMessage());
-			System.out.println("SQLState: " + ex.getSQLState());
-			System.out.println("VendorError: " + ex.getErrorCode());
-		}
-		return lockCount;
-	}
+ 		int lockCount = 0;
+ 		try {
+ 			rset = stmt.executeQuery("SELECT * FROM users WHERE username='" + username + "';");
+ 			rset.next();
+ 			lockCount = rset.getInt(4);
+ 		}
+ 		catch (SQLException ex) {
+ 			// handle any errors
+ 			System.out.println("SQLException: " + ex.getMessage());
+ 			System.out.println("SQLState: " + ex.getSQLState());
+ 			System.out.println("VendorError: " + ex.getErrorCode());
+ 		}
+ 		return lockCount;
+ 	}
+
+ 	// Increase lock count of a user by 1
+ 	public void increaseLockCount(String username) {
+ 		int lockCount = getLockCount(username);
+ 		try {
+ 			stmt.executeUpdate("UPDATE users SET lockcount=" + (lockCount + 1)
+ 					+ " WHERE username='" + username + "';");
+ 		}
+ 		catch (SQLException ex) {
+ 			// handle any errors
+ 			System.out.println("SQLException: " + ex.getMessage());
+ 			System.out.println("SQLState: " + ex.getSQLState());
+ 			System.out.println("VendorError: " + ex.getErrorCode());
+ 		}
+ 	}
+
+ 	// Reset a user's lock count to 0
+ 	public void resetLockCount(String username) {
+ 		try {
+ 			stmt.executeUpdate("UPDATE users SET lockcount=0 WHERE username='" + username + "';");
+ 		}
+ 		catch (SQLException ex) {
+ 			// handle any errors
+ 			System.out.println("SQLException: " + ex.getMessage());
+ 			System.out.println("SQLState: " + ex.getSQLState());
+ 			System.out.println("VendorError: " + ex.getErrorCode());
+ 		}
+ 	}
+
+ 	// Returns number of registered users
+ 	public int getUserCount() {
+ 		int userCount = 0;
+ 		try {
+ 			rset = stmt.executeQuery("SELECT COUNT(*) FROM users;");
+ 			rset.next();
+ 			userCount = rset.getInt(1);
+ 		}
+ 		catch (SQLException ex) {
+ 			// handle any errors
+ 			System.out.println("SQLException: " + ex.getMessage());
+ 			System.out.println("SQLState: " + ex.getSQLState());
+ 			System.out.println("VendorError: " + ex.getErrorCode());
+ 		}
+ 		return userCount;
+ 	}
+ 	
 	
-	// Increase lock count of a user by 1
-	public void increaseLockCount(String username) {
-		int lockCount = getLockCount(username);
-		try {
-			stmt.executeUpdate("UPDATE users SET lockcount=" + (lockCount + 1)
-					+ " WHERE username='" + username + "';");
-		}
-		catch (SQLException ex) {
-			// handle any errors
-			System.out.println("SQLException: " + ex.getMessage());
-			System.out.println("SQLState: " + ex.getSQLState());
-			System.out.println("VendorError: " + ex.getErrorCode());
-		}
-	}
-	
-	// Reset a user's lock count to 0
-	public void resetLockCount(String username) {
-		try {
-			stmt.executeUpdate("UPDATE users SET lockcount=0 WHERE username='" + username + "';");
-		}
-		catch (SQLException ex) {
-			// handle any errors
-			System.out.println("SQLException: " + ex.getMessage());
-			System.out.println("SQLState: " + ex.getSQLState());
-			System.out.println("VendorError: " + ex.getErrorCode());
-		}
-	}
-	
-	// Returns number of registered users
-	public int getUserCount() {
-		int userCount = 0;
-		try {
-			rset = stmt.executeQuery("SELECT COUNT(*) FROM users;");
-			rset.next();
-			userCount = rset.getInt(1);
-		}
-		catch (SQLException ex) {
-			// handle any errors
-			System.out.println("SQLException: " + ex.getMessage());
-			System.out.println("SQLState: " + ex.getSQLState());
-			System.out.println("VendorError: " + ex.getErrorCode());
-		}
-		return userCount;
-	}
-	
-	// Returns true if user already exists in database, false otherwise
-	public boolean UserExists(String username) {
-		boolean userExists = false;
-		try {
-			rset = stmt.executeQuery("SELECT EXISTS(SELECT * FROM users WHERE username='" + username + "') AS TRUTH;");
-			rset.next();
-			userExists = (rset.getInt(1) == 1);
-		}
-		catch (SQLException ex) {
-			// handle any errors
-			System.out.println("SQLException: " + ex.getMessage());
-			System.out.println("SQLState: " + ex.getSQLState());
-			System.out.println("VendorError: " + ex.getErrorCode());
-		}
-		return userExists;
-	}
-	
-	// Adds new user to database (doesn't check if user already exists)
-	public void RegisterNewUser(String username, String password, String emailaddress) {
-		try {
-			stmt.executeUpdate("INSERT INTO users VALUE('"
-					+ username + "', '" + password + "', '" + emailaddress + "', 0);");
-		}
-		catch (SQLException ex) {
-			// handle any errors
-			System.out.println("SQLException: " + ex.getMessage());
-			System.out.println("SQLState: " + ex.getSQLState());
-			System.out.println("VendorError: " + ex.getErrorCode());
-		}
-	}
+	public String getPassword(String username) {
+ 		String password = "";
+ 		try {
+ 			rset = stmt.executeQuery("SELECT * FROM users WHERE username='" + username + "';");
+ 			rset.next();
+ 			password = rset.getString(2);
+ 		}
+ 		catch (SQLException ex) {
+ 			// handle any errors
+ 			System.out.println("SQLException: " + ex.getMessage());
+ 			System.out.println("SQLState: " + ex.getSQLState());
+ 			System.out.println("VendorError: " + ex.getErrorCode());
+ 		}
+ 		return password;
+ 	}
+
+ 	public String getEmailAddress(String username) {
+ 		String emailAddress = "";
+ 		try {
+ 			rset = stmt.executeQuery("SELECT * FROM users WHERE username='" + username + "';");
+ 			rset.next();
+ 			emailAddress = rset.getString(3);
+ 		}
+ 		catch (SQLException ex) {
+ 			// handle any errors
+ 			System.out.println("SQLException: " + ex.getMessage());
+ 			System.out.println("SQLState: " + ex.getSQLState());
+ 			System.out.println("VendorError: " + ex.getErrorCode());
+ 		}
+ 		return emailAddress;
+ 	}
+
+ 	public boolean userExists(String username) {
+ 		boolean userExists = false;
+ 		try {
+ 			rset = stmt.executeQuery("SELECT EXISTS(SELECT * FROM users WHERE username='" + username + "') AS TRUTH;");
+ 			rset.next();
+ 			userExists = (Integer.parseInt(rset.getString(1)) == 1);
+ 		}
+ 		catch (SQLException ex) {
+ 			// handle any errors
+ 			System.out.println("SQLException: " + ex.getMessage());
+ 			System.out.println("SQLState: " + ex.getSQLState());
+ 			System.out.println("VendorError: " + ex.getErrorCode());
+ 		}
+ 		return userExists;
+ 	}
+
+ 	// returns true if successful, false if the user already exists
+ 	public void registerNewUser(String username, String password, String emailAddress) {
+ 		try {
+ 			stmt.executeUpdate("INSERT INTO users VALUE('"
+ 					+ username + "', '" + password + "', '" + emailAddress + "', 0);");
+ 		}
+ 		catch (SQLException ex) {
+ 			// handle any errors
+ 			System.out.println("SQLException: " + ex.getMessage());
+ 			System.out.println("SQLState: " + ex.getSQLState());
+ 			System.out.println("VendorError: " + ex.getErrorCode());
+ 		}
+ 	}
+ 	
 	
 	public static void main(String[] args) {
 
 		// -- username = csc335, password = C$C335
 		//    username = root, password = root
-		Scanner kb = new Scanner(System.in);
-		System.out.print("MySQL username: ");
-		String username = kb.next();
-		System.out.print("MySQL password: ");
-		String password = kb.next();
-		
-		DBaseConnection dbc = new DBaseConnection(username, password);
-		dbc.accessDatabase();
+//		Scanner kb = new Scanner(System.in);
+//		System.out.print("MySQL username: ");
+//		String username = kb.next();
+//		System.out.print("MySQL password: ");
+//		String password = kb.next();
+//		
+//		DBaseConnection dbc = new DBaseConnection(username, password);
+//		dbc.accessDatabase();
 	}
 
 }
