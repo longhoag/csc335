@@ -229,6 +229,43 @@ public class DBaseConnection {
 		return userCount;
 	}
 	
+	// Returns number of users who are locked out (lockcount >= 3)
+	public int getLockedUserCount() {
+		int lockedUserCount = 0;
+		try {
+			rset = stmt.executeQuery("SELECT COUNT(*) FROM users WHERE lockcount>=3;");
+			rset.next();
+			lockedUserCount = rset.getInt(1);
+		}
+		catch (SQLException ex) {
+			// handle any errors
+			System.out.println("SQLException: " + ex.getMessage());
+			System.out.println("SQLState: " + ex.getSQLState());
+			System.out.println("VendorError: " + ex.getErrorCode());
+		}
+		return lockedUserCount;
+	}
+	
+	// Returns number of users who are locked out (lockcount >= 3)
+	public String[] getLockedUsers() {
+		int count = getLockedUserCount();
+		String[] lockedUsers = new String[count];
+		try {
+			rset = stmt.executeQuery("SELECT * FROM users WHERE lockcount>=3;");
+			for (int i = 0; i < count; ++i) {
+				rset.next();
+				lockedUsers[i] = rset.getString(1);
+			}
+		}
+		catch (SQLException ex) {
+			// handle any errors
+			System.out.println("SQLException: " + ex.getMessage());
+			System.out.println("SQLState: " + ex.getSQLState());
+			System.out.println("VendorError: " + ex.getErrorCode());
+		}
+		return lockedUsers;
+	}
+	
 	// Returns true if user already exists in database, false otherwise
 	public boolean UserExists(String username) {
 		boolean userExists = false;
