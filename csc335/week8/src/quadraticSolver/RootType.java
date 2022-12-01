@@ -1,0 +1,10 @@
+package quadraticSolver;
+
+enum ROOTTYPE {
+	TWOCOMPLEX,
+	TWOREAL,
+	ONEREAL,
+	ONELINEAR,
+	INFINITE,
+	NONE;
+}
