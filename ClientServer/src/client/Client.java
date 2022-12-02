@@ -14,17 +14,7 @@ public class Client {
 	private static final int PORT = 8000;
 	
 	/* --
-	 For Windows
-	 From ipconfig:
-	 
-	 Wireless LAN adapter Wireless Network Connection:
 
-     Connection-specific DNS Suffix  . : clunet.edu
-     Link-local IPv6 Address . . . . . : fe80::1083:3e22:f5a1:a3ec%11
-     IPv4 Address. . . . . . . . . . . : 199.107.222.115 <=======This address works
-     Subnet Mask . . . . . . . . . . . : 255.255.240.0
-     Default Gateway . . . . . . . . . : 199.107.210.2
-	 
 	 For MacOS
 	 System Preferences -> Network -> Advanced -> TCP/IP -> IPv4 address 192.168.1.14
 	 
@@ -40,8 +30,7 @@ public class Client {
 	private DataOutputStream dataout;
 
 	  	
-	public Client (String host)
-	{
+	public Client (String host) {
 		Client.HOST = host;
 		try {
 			// -- construct the peer to peer socket
@@ -59,8 +48,7 @@ public class Client {
 		
 	}
 	
-	public String sendString (String _msg)
-	{
+	public String sendString(String _msg) {
 		String rtnmsg = "";
 
 		try {
@@ -89,8 +77,7 @@ public class Client {
 		
 	}
 	
-	public void disconnect()
-	{
+	public void disconnect() {
     	String text = "disconnect";
 		try {
 			// -- the server only receives String objects that are
@@ -116,23 +103,29 @@ public class Client {
 		Scanner kb = new Scanner(System.in);
 		System.out.print("Server IP Address: ");
 		String serveripaddress = kb.next();
-		//String serveripaddress = "localhost";
+		kb.close();
 		
 		// -- instantiate a Client object
 		//    the constructor will attempt to connect to the server
 		Client client = new Client(serveripaddress);
 		
-		String commandString = "";
-		String replyString = "";
+		String commandString;
+		String replyString;
 		
-		while (commandString != "disconnect") {
-			commandString = kb.next();
-			System.out.println("CLIENT: " + commandString);
-			replyString = client.sendString(commandString);
-			System.out.println("SERVER: " + replyString);
-		}
+//		for (int i = 0; i < 10; ++i) {
+//			try {
+//				Thread.sleep(1000);
+//			} catch (InterruptedException e) {
+//				e.printStackTrace();
+//			};
+//			commandString = "hello";
+//			//System.out.println("CLIENT send:  " + commandString);
+//			// -- send message to server and receive reply.
+//			replyString = client.sendString(commandString);
+//			//System.out.println("CLIENT receive: " + replyString);
+//		}
+		
 
-		kb.close();
 		client.disconnect();
 	}
 

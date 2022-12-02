@@ -11,7 +11,7 @@ import java.util.Vector;
 public class Server {
 
 	// -- assign each client connection an ID. Just increment for now
-	private int nextId = 0;
+	static int nextId = 0;
 	
 	// -- the socket that waits for client connections
 	private ServerSocket serversocket;
@@ -23,13 +23,11 @@ public class Server {
 	private Vector<ConnectionThread> clientconnections;
 	
 	
-	public int getPort()
-	{
+	public int getPort() {
 		return PORT;
 	}
 
-	public Server ()
-	{
+	public Server() {
 		
 		// -- construct the list of active client threads
 		clientconnections = new Vector<ConnectionThread>();
@@ -42,8 +40,7 @@ public class Server {
 
 	}
 
-	public void peerconnection (Socket socket)
-	{		
+	public void peerconnection (Socket socket) {		
 		// -- when a client arrives, create a thread for their communication
 		ConnectionThread connection = new ConnectionThread(nextId, socket, this);
 
@@ -61,8 +58,7 @@ public class Server {
 	
 		
 	// -- called by a ServerThread when a client is terminated
-	public void removeID(int id)
-	{
+	public void removeID(int id) {
 		// -- find the object belonging to the client thread being terminated
 		for (int i = 0; i < clientconnections.size(); ++i) {
 			ConnectionThread cc = clientconnections.get(i);
@@ -83,8 +79,7 @@ public class Server {
 	}
 
 
-	private void listen ()
-	{
+	private void listen() {
 		try {
 			// -- open the server socket
 			serversocket = new ServerSocket(getPort());
@@ -97,14 +92,11 @@ public class Server {
 					// -- connection accepted, create a peer-to-peer socket
 					//    between the server (thread) and client
 					peerconnection(socket);
-						
-				
 			}
 		}
 		catch (IOException e) {
 			e.printStackTrace();
 			System.exit(1);
-			
 		}
 	}
 	
@@ -114,9 +106,6 @@ public class Server {
 		// -- instantiate the server anonymously
 		//    no need to keep a reference to the object since it will run in its own thread
 		new Server();		
-		
 	}
-
-
 
 }

@@ -7,10 +7,11 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.Socket;
 
+import org.w3c.dom.Text;
+
+import client.ClientUI;
 import database.DBaseConnection;
 import gmail.SendEmailUsingGMailSMTP;
-
-
 
 
 public class ConnectionThread extends Thread {
@@ -29,9 +30,17 @@ public class ConnectionThread extends Thread {
 	//    it will be set at time of construction
 	private Server server;
 	
+//	public static String username = "h";
+//	public static String password = "h";
+//	public static String email = "j";
+	
+	private String username = "";
+	private String password = "";
+	private String email = "";
+	
+	
 
-	public ConnectionThread (int id, Socket socket, Server server) 
-	{
+	public ConnectionThread (int id, Socket socket, Server server) {
 		this.server = server;
 		this.id = id;
 		this.name = Integer.toString(id);
@@ -59,10 +68,8 @@ public class ConnectionThread extends Thread {
 	}
 
 
-	public void run () {
-		DBaseConnection dbc = new DBaseConnection("root", "root");
-		// It might become necessary to move this database connection to the main server file.
-		
+	public void run() {
+		DBaseConnection db = new DBaseConnection("root", "root");
 		// -- server thread runs until the client terminates the connection
 		while (go) {
 			try {
@@ -82,6 +89,7 @@ public class ConnectionThread extends Thread {
 					datain.close();
 					server.removeID(id);
 					go = false;
+					// decrement (make static to server)
 				}
 				else if (txt.equals("hello")) {
 						
@@ -89,45 +97,76 @@ public class ConnectionThread extends Thread {
 					dataout.flush();
 					
 				}
+				
+				else if (txt.contains("::")) {
+					String[] parts = txt.split("::");
+					username = parts[0];
+					password = parts[1];
+					email = parts[2];
+					
+					dataout.writeBytes("Loading..." + "\n");
+						dataout.flush();
+				}
+				
 				else if (txt.equals("login")) {
+					//--check if user exists, matched email and password 
+ 					if(db.userExists(username)) {
+ 						if(db.getLockCount(username) < 3) {
+ 							if (password.equals(db.getPassword(username))) {
+ 								//--reset
+ 								db.resetLockCount(username);
+ 	 							dataout.writeBytes("Successful Logging in as " + username + "\n");
+ 	 	 						dataout.flush();
+ 	 						}
+ 	 						else {
+ 	 							//--increase if wrong password
+ 	 	 						db.increaseLockCount(username);
+ 	 	 						
+ 	 	 						dataout.writeBytes("Wrong Password! Attempt " + db.getLockCount(username)  + "\n");
+ 	 	 						dataout.flush();
+ 	 						}
+ 						}
+ 						else {
+ 							dataout.writeBytes(username + "was locked out of the system! Please recover your password!" + "\n");
+	 	 					dataout.flush();
+ 						}
+ 						
+ 					}
+
+ 					else {
+ 						dataout.writeBytes("There's no file on the record! Please Register!" + "\n");
+ 						dataout.flush();
+ 					}
+				}
+				
+				else if(txt.equals("register")) {
+					
+ 					if (db.userExists(username)) {
+ 						dataout.writeBytes("User " + username + " already exists" + "\n");
+ 						dataout.flush();
+ 					}
+ 					else {
+ 						db.registerNewUser(username, password, email);
+ 						dataout.writeBytes("User " + username + " was registered" + "\n");
+ 						dataout.flush();
+ 					}
 					
 				}
-				else if (txt.equals("register")) {
-					dataout.writeBytes("username?" + "\n");
-					dataout.flush();
-					String user = datain.readLine();
-					if (dbc.UserExists(user)) {
-						dataout.writeBytes("User " + user + " already exists" + "\n");
-						dataout.flush();
-					}
-					else {
-						dataout.writeBytes("password?" + "\n");
-						dataout.flush();
-						String pass = datain.readLine();
-						dataout.writeBytes("email address?" + "\n");
-						dataout.flush();
-						String email = datain.readLine();
-						dbc.RegisterNewUser(user, pass, email);
-						dataout.writeBytes("User " + user + " was registered" + "\n");
-						dataout.flush();
-					}
-				}
-				else if (txt.equals("recover")) {
-					dataout.writeBytes("username?" + "\n");
-					dataout.flush();
-					String user = datain.readLine();
-					if (dbc.UserExists(user)) {
-						SendEmailUsingGMailSMTP.SendRecoveryEmail(
-								dbc.getEmailAddress(user), dbc.getPassword(user));
-						dataout.writeBytes("Password recovery email sent" + "\n");
-					}
-					else {
-						dataout.writeBytes("User " + user + " does not exist" + "\n");
-					}
-					dataout.flush();
+				
+				else if(txt.equals("recover")) {
+					if (db.userExists(username)) {
+ 						SendEmailUsingGMailSMTP.SendRecoveryEmail(db.getEmailAddress(username), db.getPassword(username));
+ 						dataout.writeBytes("Password recovery email sent to " + email + "\n");
+ 						db.resetLockCount(username);
+ 					}
+ 					else {
+ 						dataout.writeBytes("User " + username + " does not exist" + "\n");
+ 					}
+ 					dataout.flush();
+					
 				}
 				else {
-					System.out.println("unrecognized command >>" + txt + "<<");
+					System.out.println("unrecognized commadsfand >>" + txt + "<<");
 					dataout.writeBytes(txt + "\n");
 					dataout.flush();
 				}
@@ -140,3 +179,4 @@ public class ConnectionThread extends Thread {
 		}
 	}
 }
+
