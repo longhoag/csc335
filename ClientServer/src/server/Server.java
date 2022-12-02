@@ -8,7 +8,18 @@ import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.Vector;
 
+import database.DBaseConnection;
+
 public class Server {
+	
+	// Establish connection to database
+	public static DBaseConnection db = new DBaseConnection("root", "root");
+	
+	// Number of clients connected
+	public static int numConnected;
+	
+	// List of usernames of all users currently logged in
+	public static Vector<String> usersLoggedIn;
 
 	// -- assign each client connection an ID. Just increment for now
 	static int nextId = 0;
@@ -28,6 +39,12 @@ public class Server {
 	}
 
 	public Server() {
+		
+		// Initialize number of client connections to 0
+		numConnected = 0;
+		
+		// Construct the list of users logged in
+		usersLoggedIn = new Vector<String>();
 		
 		// -- construct the list of active client threads
 		clientconnections = new Vector<ConnectionThread>();
@@ -88,6 +105,10 @@ public class Server {
 			while (true) {
 					// -- block until a client comes along
 					Socket socket = serversocket.accept();
+					
+					// Increment number of connections
+					++numConnected;
+					System.out.println("numConnected: " + numConnected);
 					
 					// -- connection accepted, create a peer-to-peer socket
 					//    between the server (thread) and client

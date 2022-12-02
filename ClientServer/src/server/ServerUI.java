@@ -29,6 +29,8 @@ public class ServerUI extends JFrame {
 	private ServerUIPanel uiPanel;
 	private ServerControlPanel ctrPanel;
 	
+	Server server;
+	
 	public ServerUI() {
 		super();
 		
@@ -55,6 +57,8 @@ public class ServerUI extends JFrame {
 		
 		this.setVisible(true);
 		uiPanel.requestFocus();
+		
+		server = new Server();
 	}
 	
 	public class ServerUIPanel extends JPanel {
@@ -102,14 +106,13 @@ public class ServerUI extends JFrame {
 		}
 		
 		private void functionalityHandlers() {
-			DBaseConnection db = new DBaseConnection("root", "root123@");
 			
 			registered = new JButton("# registered users");
 			registered.addActionListener(
 					new ActionListener() {
 						@Override
 						public void actionPerformed(ActionEvent e) {
-							int count = db.getUserCount();
+							int count = Server.db.getUserCount();
 							
 							ServerUIPanel.outConsole.append(count + " users are registered!" + "\n\n");
 						}
@@ -121,7 +124,7 @@ public class ServerUI extends JFrame {
 					new ActionListener() {
 						@Override
 						public void actionPerformed(ActionEvent e) {
-							ServerUIPanel.outConsole.append(Server.nextId + " users are connected!" + "\n\n");
+							ServerUIPanel.outConsole.append(server.numConnected + " users are connected!" + "\n\n");
 						}
 					}
 					);
@@ -130,7 +133,7 @@ public class ServerUI extends JFrame {
 					new ActionListener() {
 						@Override
 						public void actionPerformed(ActionEvent e) {
-
+							ServerUIPanel.outConsole.append(server.usersLoggedIn.size() + " users are logged in!" + "\n\n");
 						}
 					}
 					);
@@ -140,7 +143,11 @@ public class ServerUI extends JFrame {
 					new ActionListener() {
 						@Override
 						public void actionPerformed(ActionEvent e) {
-
+							ServerUIPanel.outConsole.append("Users logged in:" + "\n");
+							for (int i = 0; i < server.usersLoggedIn.size(); ++i) {
+								ServerUIPanel.outConsole.append("\t" + server.usersLoggedIn.elementAt(i) + "\n");
+							}
+							ServerUIPanel.outConsole.append("\n");
 						}
 					}
 					);
@@ -150,7 +157,12 @@ public class ServerUI extends JFrame {
 					new ActionListener() {
 						@Override
 						public void actionPerformed(ActionEvent e) {
-
+							ServerUIPanel.outConsole.append("Users locked out:" + "\n");
+							String[] lockedUsers = Server.db.getLockedUsers();
+							for (int i = 0; i < lockedUsers.length; ++i) {
+								ServerUIPanel.outConsole.append("\t" + lockedUsers[i] + "\n");
+							}
+							ServerUIPanel.outConsole.append("\n");
 						}
 					}
 					);

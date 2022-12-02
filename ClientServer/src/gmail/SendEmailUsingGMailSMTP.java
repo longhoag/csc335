@@ -70,7 +70,7 @@ public class SendEmailUsingGMailSMTP {
 	// -- You must have a valid gmail username/password pair to use
 	// gmail as a SMTP service
 	static private String SMTPusername = "iris.dq";
- 	static private String SMTPpassword = "hzhkwyllhjonteqr";
+ 	static private String SMTPpassword = "<<password>>";
 
  	public static void SendRecoveryEmail(String emailAddress, String password) {
  		String to = emailAddress;

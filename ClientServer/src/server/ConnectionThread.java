@@ -38,12 +38,15 @@ public class ConnectionThread extends Thread {
 	private String password = "";
 	private String email = "";
 	
+	private boolean isLoggedIn;
+	
 	
 
 	public ConnectionThread (int id, Socket socket, Server server) {
 		this.server = server;
 		this.id = id;
 		this.name = Integer.toString(id);
+		isLoggedIn = false;
 		go = true;
 		
 		// -- create the stream I/O objects on top of the socket
@@ -69,7 +72,6 @@ public class ConnectionThread extends Thread {
 
 
 	public void run() {
-		DBaseConnection db = new DBaseConnection("root", "root");
 		// -- server thread runs until the client terminates the connection
 		while (go) {
 			try {
@@ -86,10 +88,13 @@ public class ConnectionThread extends Thread {
 				//    close the socket, remove this thread object from the
 				//    server's active client thread list, and terminate the thread
 				if (txt.equals("disconnect")) {
+					
+					// Decrement number of connected clients
+					--Server.numConnected;
+					
 					datain.close();
 					server.removeID(id);
 					go = false;
-					// decrement (make static to server)
 				}
 				else if (txt.equals("hello")) {
 						
@@ -110,19 +115,22 @@ public class ConnectionThread extends Thread {
 				
 				else if (txt.equals("login")) {
 					//--check if user exists, matched email and password 
- 					if(db.userExists(username)) {
- 						if(db.getLockCount(username) < 3) {
- 							if (password.equals(db.getPassword(username))) {
+ 					if(Server.db.userExists(username)) {
+ 						if(Server.db.getLockCount(username) < 3) {
+ 							if (password.equals(Server.db.getPassword(username))) {
  								//--reset
- 								db.resetLockCount(username);
+ 								Server.db.resetLockCount(username);
  	 							dataout.writeBytes("Successful Logging in as " + username + "\n");
  	 	 						dataout.flush();
+ 	 	 						
+ 	 	 						isLoggedIn = true;
+ 	 	 						Server.usersLoggedIn.add(username);
  	 						}
  	 						else {
  	 							//--increase if wrong password
- 	 	 						db.increaseLockCount(username);
+ 	 	 						Server.db.increaseLockCount(username);
  	 	 						
- 	 	 						dataout.writeBytes("Wrong Password! Attempt " + db.getLockCount(username)  + "\n");
+ 	 	 						dataout.writeBytes("Wrong Password! Attempt " + Server.db.getLockCount(username)  + "\n");
  	 	 						dataout.flush();
  	 						}
  						}
@@ -139,14 +147,21 @@ public class ConnectionThread extends Thread {
  					}
 				}
 				
+				else if(txt.equals("logout")) {
+					if (isLoggedIn) {
+						isLoggedIn = false;
+						Server.usersLoggedIn.remove(username);
+					}
+				}
+				
 				else if(txt.equals("register")) {
 					
- 					if (db.userExists(username)) {
+ 					if (Server.db.userExists(username)) {
  						dataout.writeBytes("User " + username + " already exists" + "\n");
  						dataout.flush();
  					}
  					else {
- 						db.registerNewUser(username, password, email);
+ 						Server.db.registerNewUser(username, password, email);
  						dataout.writeBytes("User " + username + " was registered" + "\n");
  						dataout.flush();
  					}
@@ -154,10 +169,10 @@ public class ConnectionThread extends Thread {
 				}
 				
 				else if(txt.equals("recover")) {
-					if (db.userExists(username)) {
- 						SendEmailUsingGMailSMTP.SendRecoveryEmail(db.getEmailAddress(username), db.getPassword(username));
+					if (Server.db.userExists(username)) {
+ 						SendEmailUsingGMailSMTP.SendRecoveryEmail(Server.db.getEmailAddress(username), Server.db.getPassword(username));
  						dataout.writeBytes("Password recovery email sent to " + email + "\n");
- 						db.resetLockCount(username);
+ 						Server.db.resetLockCount(username);
  					}
  					else {
  						dataout.writeBytes("User " + username + " does not exist" + "\n");

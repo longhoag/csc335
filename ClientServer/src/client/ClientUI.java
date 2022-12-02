@@ -136,7 +136,7 @@ public class ClientUI extends JFrame {
 
 		private static final long serialVersionUID = 5978273664496847630L;
 		
-		private JLabel ipLabel = new JLabel("Enter IP Adress: ");
+		private JLabel ipLabel = new JLabel("Enter IP Address: ");
 		private JTextField ipField;
 		//--button 
 		private JButton connectButton;
@@ -168,9 +168,10 @@ public class ClientUI extends JFrame {
 				
 							serveripaddress = ipField.getText();
 							
-							client = new Client(serveripaddress);
+							
 							
 							if(count % 2 == 0) {
+								client = new Client(serveripaddress);
 								String firstCommand = "hello";
 								String firstReply = client.sendString(firstCommand);
 								
@@ -187,7 +188,7 @@ public class ClientUI extends JFrame {
 									controlPanel.revalidate();
 									//controlPanel.repaint();
 									
-									UIPanel.outConsole.append("Successful connected to " + serveripaddress + "\n");
+									UIPanel.outConsole.append("Successfully connected to " + serveripaddress + "\n");
 								}
 								else {
 									connectButton.setText("Connect");
