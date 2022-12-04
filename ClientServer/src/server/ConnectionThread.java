@@ -60,14 +60,27 @@ public class ConnectionThread extends Thread {
 		
 	}
 	
-	public String toString ()
-	{
+	public String toString() {
 		return name;
 	}
 	
-	public String getname ()
-	{
+	public String getname() {
 		return name;
+	}
+	
+	private void logout() {
+		if (isLoggedIn) {
+			isLoggedIn = false;
+			Server.usersLoggedIn.removeElement(username);
+			try {
+				dataout.writeBytes("Logging Out..." + "\n");
+				dataout.flush();
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			
+		}
 	}
 
 
@@ -91,6 +104,7 @@ public class ConnectionThread extends Thread {
 					
 					// Decrement number of connected clients
 					--Server.numConnected;
+					logout();
 					
 					datain.close();
 					server.removeID(id);
@@ -148,12 +162,13 @@ public class ConnectionThread extends Thread {
 				}
 				
 				else if(txt.equals("logout")) {
-					if (isLoggedIn) {
-						isLoggedIn = false;
-						Server.usersLoggedIn.removeElement(username);
-						dataout.writeBytes("Logging Out..." + "\n");
- 						dataout.flush();
-					}
+// 					if (isLoggedIn) {
+// 						isLoggedIn = false;
+// 						Server.usersLoggedIn.removeElement(username);
+// 						dataout.writeBytes("Logging Out..." + "\n");
+//  						dataout.flush();
+// 					}
+					logout();
 				}
 				
 				else if(txt.equals("register")) {
