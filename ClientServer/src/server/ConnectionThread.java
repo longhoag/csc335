@@ -153,7 +153,6 @@ public class ConnectionThread extends Thread {
 						Server.usersLoggedIn.removeElement(username);
 						dataout.writeBytes("Logging Out..." + "\n");
  						dataout.flush();
-						
 					}
 				}
 				

@@ -38,7 +38,6 @@ public class ClientUI extends JFrame {
 	
 	//testing
 	private static int count = 0;
-	private boolean connectStatus = false;
 	
 	private Client client;
 	
@@ -68,7 +67,6 @@ public class ClientUI extends JFrame {
 		this.setVisible(true);
 		
 		this.revalidate();
-		//uiPanel.requestFocus();
 
 	}
 	
@@ -85,8 +83,7 @@ public class ClientUI extends JFrame {
 			//--scrollable field
 			outConsole = new JTextArea(30, 30);
 			outConsole.setFocusable(false);
-			scrollableTextArea = new JScrollPane(outConsole);
-			//scrollableTextArea.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_ALWAYS);  
+			scrollableTextArea = new JScrollPane(outConsole);  
 	        scrollableTextArea.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);  
 	        this.add(scrollableTextArea); 
 	        this.revalidate();
@@ -108,8 +105,6 @@ public class ClientUI extends JFrame {
 		//--text field
 		public ControlPanel() {
 			
-			functionalityHandlers();
-			
 			setLayout(new FlowLayout());
 			
 			ipBox = new IpPanel();
@@ -123,10 +118,6 @@ public class ClientUI extends JFrame {
 			this.add(ipBox);
 			this.revalidate();
 			
-		}
-		
-		private void functionalityHandlers() {
-
 		}
 		
 	}
@@ -177,47 +168,31 @@ public class ClientUI extends JFrame {
 								
 								if (firstReply.equals("world!")) {
 									connectButton.setText("Disconnect");
-									connectStatus = true;
 									
-									controlPanel.add(controlPanel.usernameBox);
-									controlPanel.add(controlPanel.passwordBox);
-									controlPanel.add(controlPanel.emailBox);
-									controlPanel.add(controlPanel.loginBox);
-									controlPanel.add(controlPanel.recoverBox);
+									addE();
 									
 									controlPanel.revalidate();
-									//controlPanel.repaint();
+									controlPanel.repaint();
 									
 									UIPanel.outConsole.append("Successfully connected to " + serveripaddress + "\n");
 								}
 								else {
 									connectButton.setText("Connect");
-									connectStatus = false;
 								}
 							}
 							//-- if count is odd
 							else {
 								connectButton.setText("Connect");
 								client.disconnect();
-								connectStatus = false;
-					
-//								controlPanel.remove(controlPanel.usernameBox);
-//								controlPanel.remove(controlPanel.passwordBox);
-//								controlPanel.remove(controlPanel.emailBox);
-//								controlPanel.remove(controlPanel.loginBox);
-//								controlPanel.remove(controlPanel.recoverBox);
+								
 								removeE();
 								controlPanel.revalidate();
 								controlPanel.repaint();
-								//controlPanel.repaint();
 								
 								UIPanel.outConsole.append("Disconnected from server " + serveripaddress + "\n");
 							
 							}
-							//MultiThreading prog = new MultiThreading();
-							//prog.start();
 							count++; 
-							
 							
 							System.out.println(ipField);
 						}
@@ -234,8 +209,6 @@ public class ClientUI extends JFrame {
 		private static JTextField usernameField;
 		
 		public UsernamePanel() {
-			functionalityHandlers();
-			
 			setLayout(new FlowLayout());
 			
 			this.add(userLabel);
@@ -247,11 +220,6 @@ public class ClientUI extends JFrame {
 			
 		}
 		
-		private void functionalityHandlers() {
-			
-		}
-		
-		
 	}
 	
 	public class PasswordPanel extends JPanel {
@@ -262,7 +230,6 @@ public class ClientUI extends JFrame {
 		private static JTextField passwordField;
 		
 		public PasswordPanel() {
-			functionalityHandlers();
 			
 			setLayout(new FlowLayout());
 			
@@ -275,11 +242,6 @@ public class ClientUI extends JFrame {
 			
 		}
 		
-		private void functionalityHandlers() {
-			
-		}
-		
-		
 	}
 	
 	public class EmailPanel extends JPanel {
@@ -290,9 +252,8 @@ public class ClientUI extends JFrame {
 		private static JTextField emailField;
 		
 		public EmailPanel() {
-			functionalityHandlers();
 			
-			//setLayout(new FlowLayout());
+			setLayout(new FlowLayout());
 			
 			this.add(emailLabel);
 			
@@ -302,11 +263,6 @@ public class ClientUI extends JFrame {
 			this.revalidate();
 			
 		}
-		
-		private void functionalityHandlers() {
-			
-		}
-		
 		
 	}
 	
@@ -485,11 +441,7 @@ public class ClientUI extends JFrame {
 							controlPanel.revalidate();
 							controlPanel.repaint();
 							
-							controlPanel.add(controlPanel.usernameBox);
-							controlPanel.add(controlPanel.passwordBox);
-							controlPanel.add(controlPanel.emailBox);
-							controlPanel.add(controlPanel.loginBox);
-							controlPanel.add(controlPanel.recoverBox);
+							addE();
 							
 							controlPanel.revalidate();
 							UIPanel.outConsole.append(response);
@@ -505,6 +457,7 @@ public class ClientUI extends JFrame {
 		controlPanel.remove(controlPanel.emailBox);
 		controlPanel.remove(controlPanel.loginBox);
 		controlPanel.remove(controlPanel.recoverBox);
+		controlPanel.remove(controlPanel.logOutBox);
 		
 		controlPanel.revalidate();
 	}
@@ -516,7 +469,7 @@ public class ClientUI extends JFrame {
 		controlPanel.add(controlPanel.loginBox);
 		controlPanel.add(controlPanel.recoverBox);
 		
-		//controlPanel.revalidate();
+		controlPanel.revalidate();
 	}
 	
 	public static void main (String[] args) {

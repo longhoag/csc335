@@ -75,7 +75,6 @@ public class ServerUI extends JFrame {
 			outConsole = new JTextArea(30, 30);
 			outConsole.setFocusable(false);
 			scrollableTextArea = new JScrollPane(outConsole);
-			//scrollableTextArea.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_ALWAYS);  
 	        scrollableTextArea.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);  
 	        this.add(scrollableTextArea); 
 			
@@ -95,14 +94,13 @@ public class ServerUI extends JFrame {
 		public ServerControlPanel() {
 			functionalityHandlers();
 			
-			//setLayout(new FlowLayout());
+			setLayout(new FlowLayout());
 		
 			this.add(registered);
 			this.add(connected);
 			this.add(loggedIn);
 			this.add(usersLoggedIn);
 			this.add(usersLockedOut);
-			
 		}
 		
 		private void functionalityHandlers() {
@@ -169,9 +167,7 @@ public class ServerUI extends JFrame {
 		}
 		
 	}
-	
-	//public class register
-	
+
 	public static void main (String[] args) {
 		
 		new ServerUI();
