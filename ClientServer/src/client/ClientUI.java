@@ -437,7 +437,15 @@ public class ClientUI extends JFrame {
 					new ActionListener() {
 						@Override
 						public void actionPerformed(ActionEvent e) {
+							username = UsernamePanel.usernameField.getText();
+							password = PasswordPanel.passwordField.getText();
+							emailAddress = EmailPanel.emailField.getText();
+							
 							String command = "recover";
+							
+							String rep = client.sendString(username + "::" + password + "::" + emailAddress);
+							
+							UIPanel.outConsole.append(rep + "\n");
 							
 							String response = client.sendString(command);
 
@@ -471,6 +479,8 @@ public class ClientUI extends JFrame {
 					new ActionListener() {
 						@Override
 						public void actionPerformed(ActionEvent e) {
+							String command = "logout";
+							String response = client.sendString(command);
 							controlPanel.remove(controlPanel.logOutBox);
 							controlPanel.revalidate();
 							controlPanel.repaint();
@@ -482,7 +492,7 @@ public class ClientUI extends JFrame {
 							controlPanel.add(controlPanel.recoverBox);
 							
 							controlPanel.revalidate();
-							UIPanel.outConsole.append("Logging Out..." + "\n");
+							UIPanel.outConsole.append(response);
 						}
 					}
 					);

@@ -6,7 +6,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.Socket;
 import java.net.UnknownHostException;
-import java.util.Scanner;
+//import java.util.Scanner;
 
 public class Client {
 
@@ -99,19 +99,19 @@ public class Client {
 	}
 	
 	
-	public static void main(String[] args) {
-		Scanner kb = new Scanner(System.in);
-		System.out.print("Server IP Address: ");
-		String serveripaddress = kb.next();
-		kb.close();
-		
-		// -- instantiate a Client object
-		//    the constructor will attempt to connect to the server
-		Client client = new Client(serveripaddress);
-		
-		String commandString;
-		String replyString;
-		
+//	public static void main(String[] args) {
+//		Scanner kb = new Scanner(System.in);
+//		System.out.print("Server IP Address: ");
+//		String serveripaddress = kb.next();
+//		kb.close();
+//		
+//		// -- instantiate a Client object
+//		//    the constructor will attempt to connect to the server
+//		Client client = new Client(serveripaddress);
+//		
+//		String commandString;
+//		String replyString;
+//		
 //		for (int i = 0; i < 10; ++i) {
 //			try {
 //				Thread.sleep(1000);
@@ -124,10 +124,10 @@ public class Client {
 //			replyString = client.sendString(commandString);
 //			//System.out.println("CLIENT receive: " + replyString);
 //		}
-		
-
-		client.disconnect();
-	}
+//		
+//
+//		client.disconnect();
+//	}
 
 }
 

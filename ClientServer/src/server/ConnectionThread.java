@@ -150,7 +150,10 @@ public class ConnectionThread extends Thread {
 				else if(txt.equals("logout")) {
 					if (isLoggedIn) {
 						isLoggedIn = false;
-						Server.usersLoggedIn.remove(username);
+						Server.usersLoggedIn.removeElement(username);
+						dataout.writeBytes("Logging Out..." + "\n");
+ 						dataout.flush();
+						
 					}
 				}
 				
@@ -171,7 +174,7 @@ public class ConnectionThread extends Thread {
 				else if(txt.equals("recover")) {
 					if (Server.db.userExists(username)) {
  						SendEmailUsingGMailSMTP.SendRecoveryEmail(Server.db.getEmailAddress(username), Server.db.getPassword(username));
- 						dataout.writeBytes("Password recovery email sent to " + email + "\n");
+ 						dataout.writeBytes("Password recovery email sent to " + Server.db.getEmailAddress(username) + "\n");
  						Server.db.resetLockCount(username);
  					}
  					else {
