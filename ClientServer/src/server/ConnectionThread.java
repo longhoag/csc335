@@ -162,12 +162,6 @@ public class ConnectionThread extends Thread {
 				}
 				
 				else if(txt.equals("logout")) {
-// 					if (isLoggedIn) {
-// 						isLoggedIn = false;
-// 						Server.usersLoggedIn.removeElement(username);
-// 						dataout.writeBytes("Logging Out..." + "\n");
-//  						dataout.flush();
-// 					}
 					logout();
 				}
 				
