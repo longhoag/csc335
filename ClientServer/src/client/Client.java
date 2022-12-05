@@ -40,11 +40,11 @@ public class Client {
 			datain = new BufferedReader(new InputStreamReader(socket.getInputStream()));
 			dataout = new DataOutputStream(socket.getOutputStream());
 		} catch (UnknownHostException e) {
-// 			System.out.println("Host " + HOST + " at port " + PORT + " is unavailable.");
+ 			System.out.println("Host " + HOST + " at port " + PORT + " is unavailable.");
 // 			System.exit(1);
 			ClientUI.UIPanel.outConsole.append("Host " + HOST + " at port " + PORT + " is unavailable." + "\n");
 		} catch (IOException e) {
-// 			System.out.println("Unable to create I/O streams.");
+ 			System.out.println("Unable to create I/O streams.");
 // 			System.exit(1);
 			ClientUI.UIPanel.outConsole.append("Unable to create I/O streams." + "\n");
 		}
