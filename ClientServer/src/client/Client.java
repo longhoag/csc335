@@ -47,6 +47,8 @@ public class Client {
  			System.out.println("Unable to create I/O streams.");
 // 			System.exit(1);
 			ClientUI.UIPanel.outConsole.append("Unable to create I/O streams." + "\n");
+		} catch (Exception e) {
+			System.out.println("Error");
 		}
 		
 	}
