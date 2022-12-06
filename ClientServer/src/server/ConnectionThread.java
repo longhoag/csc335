@@ -68,22 +68,6 @@ public class ConnectionThread extends Thread {
 		return name;
 	}
 	
-	private void logout() {
-		if (isLoggedIn) {
-			isLoggedIn = false;
-			Server.usersLoggedIn.removeElement(username);
-			try {
-				dataout.writeBytes("Logging Out..." + "\n");
-				dataout.flush();
-			} catch (IOException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-			
-		}
-	}
-
-
 	public void run() {
 		// -- server thread runs until the client terminates the connection
 		while (go) {
@@ -128,37 +112,7 @@ public class ConnectionThread extends Thread {
 				}
 				
 				else if (txt.equals("login")) {
-					//--check if user exists, matched email and password 
- 					if(Server.db.userExists(username)) {
- 						if(Server.db.getLockCount(username) < 3) {
- 							if (password.equals(Server.db.getPassword(username))) {
- 								//--reset
- 								Server.db.resetLockCount(username);
- 	 							dataout.writeBytes("Successful Logging in as " + username + "\n");
- 	 	 						dataout.flush();
- 	 	 						
- 	 	 						isLoggedIn = true;
- 	 	 						Server.usersLoggedIn.add(username);
- 	 						}
- 	 						else {
- 	 							//--increase if wrong password
- 	 	 						Server.db.increaseLockCount(username);
- 	 	 						
- 	 	 						dataout.writeBytes("Wrong Password! Attempt " + Server.db.getLockCount(username)  + "\n");
- 	 	 						dataout.flush();
- 	 						}
- 						}
- 						else {
- 							dataout.writeBytes(username + "was locked out of the system! Please recover your password!" + "\n");
-	 	 					dataout.flush();
- 						}
- 						
- 					}
-
- 					else {
- 						dataout.writeBytes("There's no file on the record! Please Register!" + "\n");
- 						dataout.flush();
- 					}
+					login();
 				}
 				
 				else if(txt.equals("logout")) {
@@ -166,30 +120,11 @@ public class ConnectionThread extends Thread {
 				}
 				
 				else if(txt.equals("register")) {
-					
- 					if (Server.db.userExists(username)) {
- 						dataout.writeBytes("User " + username + " already exists" + "\n");
- 						dataout.flush();
- 					}
- 					else {
- 						Server.db.registerNewUser(username, password, email);
- 						dataout.writeBytes("User " + username + " was registered" + "\n");
- 						dataout.flush();
- 					}
-					
+					register();
 				}
 				
 				else if(txt.equals("recover")) {
-					if (Server.db.userExists(username)) {
- 						SendEmailUsingGMailSMTP.SendRecoveryEmail(Server.db.getEmailAddress(username), Server.db.getPassword(username));
- 						dataout.writeBytes("Password recovery email sent to " + Server.db.getEmailAddress(username) + "\n");
- 						Server.db.resetLockCount(username);
- 					}
- 					else {
- 						dataout.writeBytes("User " + username + " does not exist" + "\n");
- 					}
- 					dataout.flush();
-					
+					recover();
 				}
 				else {
 					System.out.println("unrecognized commadsfand >>" + txt + "<<");
@@ -203,6 +138,76 @@ public class ConnectionThread extends Thread {
 			}
 			
 		}
+	}
+	
+	private void login() throws IOException {
+		String output = "";
+		//--check if user exists, matched email and password 
+			if(Server.db.userExists(username)) {
+				if(Server.db.getLockCount(username) < 3) {
+					if (password.equals(Server.db.getPassword(username))) {
+						//--reset
+						Server.db.resetLockCount(username);
+						output = "Successful Logging in as " + username + "\n";
+						
+						isLoggedIn = true;
+						Server.usersLoggedIn.add(username);
+					}
+					else {
+						//--increase if wrong password
+						Server.db.increaseLockCount(username);
+						
+						output = "Wrong Password! Attempt " + Server.db.getLockCount(username)  + "\n";
+					}
+				}
+				else {
+					output = username + " was locked out of the system! Please recover your password!" + "\n";
+				}
+				
+			}
+
+			else {
+				output = "There's no file on the record! Please Register!" + "\n";
+			}
+			
+			dataout.writeBytes(output);
+			dataout.flush();
+	}
+	
+	private void logout() throws IOException {
+		if (isLoggedIn) {
+			isLoggedIn = false;
+			Server.usersLoggedIn.removeElement(username);
+			dataout.writeBytes("Logging Out..." + "\n");
+			dataout.flush();
+		}
+	}
+	
+	private void register() throws IOException {
+		String output = "";
+		if (Server.db.userExists(username)) {
+			output = "User " + username + " already exists" + "\n";
+		}
+		else {
+			Server.db.registerNewUser(username, password, email);
+			output = "User " + username + " was registered" + "\n";
+		}
+		dataout.writeBytes(output);
+		dataout.flush();
+	}
+	
+	private void recover() throws IOException {
+		String output = "";
+		if (Server.db.userExists(username)) {
+			SendEmailUsingGMailSMTP.SendRecoveryEmail(Server.db.getEmailAddress(username), Server.db.getPassword(username));
+			output = "Password recovery email sent to " + Server.db.getEmailAddress(username) + "\n";
+			Server.db.resetLockCount(username);
+		}
+		else {
+			output = "User " + username + " does not exist" + "\n";
+		}
+		dataout.writeBytes(output);
+		dataout.flush();
 	}
 }
 

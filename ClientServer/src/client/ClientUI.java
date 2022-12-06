@@ -140,7 +140,7 @@ public class ClientUI extends JFrame {
 			this.add(ipLabel);
 			
 			//-- construct text field
-			ipField = new JTextField("10.100.13.245", 20);
+			ipField = new JTextField("", 20);
 			
 			//--add items 
 			this.add(ipField);
@@ -213,7 +213,7 @@ public class ClientUI extends JFrame {
 			
 			this.add(userLabel);
 			
-			usernameField = new JTextField("longhoang", 15);
+			usernameField = new JTextField("", 15);
 			
 			this.add(usernameField);
 			this.revalidate();
@@ -235,7 +235,7 @@ public class ClientUI extends JFrame {
 			
 			this.add(passwordLabel);
 			
-			passwordField = new JTextField("ratl3as@@1A", 15);
+			passwordField = new JTextField("", 15);
 			
 			this.add(passwordField);
 			this.revalidate();
@@ -257,7 +257,7 @@ public class ClientUI extends JFrame {
 			
 			this.add(emailLabel);
 			
-			emailField = new JTextField("viettri12@gmail.com", 15);
+			emailField = new JTextField("", 15);
 			
 			this.add(emailField);
 			this.revalidate();
@@ -451,7 +451,7 @@ public class ClientUI extends JFrame {
 		}
 	}
 	
-	public void removeE() {
+	private void removeE() {
 		controlPanel.remove(controlPanel.usernameBox);
 		controlPanel.remove(controlPanel.passwordBox);
 		controlPanel.remove(controlPanel.emailBox);
@@ -462,7 +462,7 @@ public class ClientUI extends JFrame {
 		controlPanel.revalidate();
 	}
 	
-	public void addE() {
+	private void addE() {
 		controlPanel.add(controlPanel.usernameBox);
 		controlPanel.add(controlPanel.passwordBox);
 		controlPanel.add(controlPanel.emailBox);
